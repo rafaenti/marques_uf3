@@ -2,13 +2,23 @@
 
 const http = require("http");
 const fs = require("fs");
+const node_static = require("node-static");
 
 console.log("Inicializando el servidor web");
+
+let public_files = new node_static.Server("/home/enti/marques_uf3/pub");
 
 http.createServer((request, response) => {
 	console.log(request.url);
 
+	public_files.serve(request, response);
+
+
+
+
+
 	/*Workaround hasta la siguiente lección*/
+	/*
 	if (request.url == "/stars.jpg"){
 		fs.readFile("stars.jpg", (error, content) => {
 			response.writeHead(200, {'Content-Type': 'image/jpeg'}); 
@@ -27,5 +37,5 @@ http.createServer((request, response) => {
 	});
 
 	}
-
+	*/
 }).listen(8080);
