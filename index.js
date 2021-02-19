@@ -6,7 +6,7 @@ const node_static = require("node-static");
 
 console.log("Inicializando el servidor web");
 
-let public_files = new node_static.Server("/home/enti/marques_uf3/pub");
+let public_files = new node_static.Server("pub");
 
 http.createServer((request, response) => {
 	console.log(request.url);

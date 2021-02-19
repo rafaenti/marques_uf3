@@ -30,6 +30,8 @@ let game = new Phaser.Game(config);
 
 let bg;
 
+const CAR_SCALE = 4;
+
 let car = [];
 
 let car_left_top_x = -128;
@@ -44,27 +46,56 @@ let car_right_top_y = scene_h/2 - 52;
 let car_right_bottom_x = scene_w+128;
 let car_right_bottom_y = scene_h/2 - 136;
 
+let car_speed = 8;
+
 let player;
 let player_init_x = scene_w/2;
 let player_init_y = scene_h - 32;
+
 
 let up_key;
 let right_key;
 let down_key;
 let left_key;
 
+
+let car_list = [
+	{
+		name: "car1",
+		img: "ambulance.png",
+		speed: 4
+	},
+	{
+		name: "car2",
+		img: "police.png",
+		speed: 6
+	},
+	{
+		name: "car3",
+		img: "sedan.png",
+		speed: 2,
+		flip: true
+	},
+	{
+		name: "car4",
+		img: "scooter.png",
+		speed: 3,
+		flip: true
+	}
+];
+
+
+const PATH_CARS = "PNG/Cars/";
+const PATH_CHARS = "PNG/Characters/";
+
+
 function precarga ()
 {
 	this.load.image("background", "road.jpg");
 
-	this.load.image("car1", "PNG/Cars/ambulance.png");
-	this.load.image("car2", "PNG/Cars/police.png");
-	this.load.image("car3", "PNG/Cars/sedan.png");
-	this.load.image("car4", "PNG/Cars/scooter.png");
-	this.load.image("car5", "PNG/Cars/ambulance.png");
-	this.load.image("car6", "PNG/Cars/ambulance.png");
-
-	this.load.image("character", "PNG/Characters/woman.png");
+	car_list.forEach( car => this.load.image(car.name, PATH_CARS+car.img) );
+	
+	this.load.image("character", PATH_CHARS+"woman.png");
 }
 
 function crear ()
@@ -81,21 +112,35 @@ function crear ()
 
 	bg.setScale(2);
 
-	car[0].setScale(4);
-	car[1].setScale(4);
 
-	car[2].setScale(4);
-	car[2].flipX = true;
-	car[3].setScale(4);
-	car[3].flipX = true;
+	car.forEach( (elemento, index, array) => {
+		elemento.speed = car_list[index].speed;
+		elemento.setScale(CAR_SCALE);
+		if (car_list[index].flip)
+			elemento.flipX = true;
+	});
 
-	player.setScale(4);
+	player.setScale(3);
 
 	up_key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
 	right_key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
 	down_key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.DOWN);
 	left_key = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
 }
+
+
+function comprueba_coche (coche)
+{
+	if (coche.flipX){
+		if (coche.x <= -128)
+			coche.x = car_right_top_x;
+	}
+	else{
+		if (coche.x >= scene_w + 128)
+			coche.x = car_left_top_x;
+	}
+}
+
 
 function actualiza ()
 {
@@ -113,10 +158,21 @@ function actualiza ()
 		player.x--;
 	}
 
-	car[0].x += 8;
-	car[1].x += 8;
-	car[2].x -= 8;
-	car[3].x -= 8;
+
+	//car.forEach(function (coche) { coche.x += car_speed; });
+	//car.forEach( coche => coche.x += car_speed );
+
+	car.forEach(coche => {
+
+		if (coche.flipX){
+			coche.x -= coche.speed;
+		}
+		else {
+			coche.x += coche.speed;
+		}
+	});
+
+	car.forEach(comprueba_coche);
 }
 </script>
 
